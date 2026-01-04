@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پرامپت‌های سینمایی | علی خداکرمی</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+        
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #0f172a; /* Slate 950 */
+            color: #e2e8f0; /* Slate 200 */
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+        
+        /* Iran Flag Gradient Animation */
+        .iran-gradient-text {
+            background: linear-gradient(to left, #22c55e, #f8fafc, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+        }
+        
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Icons Definitions (SVG Components) ---
+        
+        const Icon = ({ size = 24, className = "", children }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width={size} 
+                height={size} 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className={className}
+            >
+                {children}
+            </svg>
+        );
+
+        const Copy = (props) => (
+            <Icon {...props}>
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </Icon>
+        );
+
+        const Check = (props) => (
+            <Icon {...props}>
+                <path d="M20 6 9 17l-5-5" />
+            </Icon>
+        );
+
+        const Instagram = (props) => (
+            <Icon {...props}>
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+            </Icon>
+        );
+
+        const Sparkles = (props) => (
+            <Icon {...props}>
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z" />
+                <path d="M5 3v4" />
+                <path d="M9 5h4" />
+                <path d="M5 21v-4" />
+                <path d="M9 19h-4" />
+            </Icon>
+        );
+
+        const Film = (props) => (
+            <Icon {...props}>
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M7 3v18" />
+                <path d="M3 7.5h4" />
+                <path d="M3 12h18" />
+                <path d="M3 16.5h4" />
+                <path d="M17 3v18" />
+                <path d="M17 7.5h4" />
+                <path d="M17 16.5h4" />
+            </Icon>
+        );
+
+        const ImageIcon = (props) => (
+            <Icon {...props}>
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                <circle cx="9" cy="9" r="2" />
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+            </Icon>
+        );
+
+        // --- Data ---
+        const prompts = [
+            {
+                id: 1,
+                title: "تصویر ۱: کویر (حالت اولیه)",
+                type: "image",
+                category: "کانسپت پرتره",
+                content: `Image 1 Prompt:
+Use the uploaded image as the ONLY face reference .
+The face, eyes, hair, skin texture, and facial proportions must remain 100% identical .
+No beautification, no changes, no smile .
+Create an ultra-realistic cinematic conceptual portrait of a Persian person .
+Expression :
+Serious, calm, emotional, thoughtful .
+No smile .
+Outfit :
+Black inner top .
+Minimal, neutral styling .
+No distracting patterns .
+Pose :
+The person is standing and gently hugging a large symbolic object close to the chest with one arm .
+With the other hand, they are holding an elegant watering can, slightly tilted ,
+as if ABOUT TO START watering (no water touching yet) .
+The head is gently inclined toward the object .
+Eyes focused downward with care and intention .
+Main Object (Iran – FRAME 1 / DESERT VERSION):
+A large silhouette in the exact shape of the map of Iran.
+The Iran shape is made entirely of dry, cracked desert soil .
+Completely barren .
+No flowers .
+No plants .
+No greenery .
+No color bands .
+Surface details :
+Cracked earth texture .
+Dry dust .
+Erosion lines .
+Natural desert soil detail .
+Very dry, lifeless appearance .
+IMPORTANT:
+This is the BEFORE state .
+No water has touched the Iran map yet .
+No growth .
+No buds .
+No moisture .
+Watering Can :
+Elegant, refined watering can .
+Classic artistic garden design.
+Matte metal or ceramic look.
+Slim spout .
+Cinematic and aesthetic .
+NOT industrial .
+NOT plastic .
+Background :
+Soft blurred background (studio or subtle outdoor) .
+Warm neutral tones .
+Shallow depth of field .
+Subject and Iran shape razor-sharp, background creamy bokeh .
+Lighting :
+Soft cinematic lighting .
+Warm but dry feeling .
+Subtle shadows .
+No moisture highlights .
+Photography :
+Ultra-realistic cinematic portrait photography .
+85mm lens look .
+High dynamic range .
+8K quality .
+Composition :
+Chest-up framing .
+Centered subject .
+No text .
+No logos .
+No symbols .
+No extra elements .
+Mood :
+Silence before change .
+Tension .
+Beginning .
+Contained hope .`
+            },
+            {
+                id: 2,
+                title: "تصویر ۲: انتقال (آغاز امید)",
+                type: "image",
+                category: "کانسپت پرتره",
+                content: `Image 2 Prompt:
+Use the uploaded image as the FULL visual and face reference.
+The person’s face, eyes, hair, skin texture, facial proportions, expression,
+body posture, clothing, camera angle, framing, and lighting
+must remain 100% identical to the reference image.
+No beautification, no changes, no smile.
+Create an ultra-realistic cinematic conceptual portrait.
+Pose:
+Keep the exact same pose as the reference image.
+The person is holding the Iran-shaped object close to the chest.
+The elegant watering can remains in the same hand and position.
+Main Object (Iran – Transition State):
+The object remains a silhouette in the exact shape of the map of Iran.
+The dry cracked desert soil is still visible,
+BUT the FIRST SIGNS of life have appeared.
+Floral Emergence (VERY IMPORTANT):
+Small, delicate blossoms are emerging from the surface of the Iran map,
+arranged HORIZONTALLY to resemble the Iranian flag:
+Top section: GREEN blossoms and tiny green leaves
+Middle section: WHITE blossoms
+Bottom section: RED blossoms
+Important details:
+• Blossoms are few, subtle, and symbolic (NOT fully grown)
+• Flowers are small and partially opened
+• Desert soil texture remains dominant
+• This is an early transition stage, not full bloom
+Flowers must be:
+Three-dimensional
+Slightly raised from the soil
+Natural botanical realism
+Soft shadows
+No flat or painted look
+Water Interaction:
+The soil shows the first signs of moisture.
+Very subtle darkened areas where water has touched.
+No heavy water flow.
+No puddles.
+Lighting:
+Same cinematic lighting as the reference image.
+Slightly softer and warmer than before.
+Gentle highlights on blossoms.
+Background:
+Identical to reference image.
+Soft blurred.
+No movement.
+Photography:
+Ultra-realistic cinematic portrait photography.
+85mm lens look.
+High detail.
+8K quality.
+Composition:
+Chest-up framing.
+Centered subject.
+No text.
+No logos.
+No symbols.
+No extra elements.
+Mood:
+Hope begins.
+Life emerging.
+Quiet transformation.
+Contained optimism.`
+            },
+            {
+                id: 3,
+                title: "تصویر ۳: شکوفایی نهایی (تولد دوباره)",
+                type: "image",
+                category: "کانسپت پرتره",
+                content: `Image 3 Prompt:
+Use the uploaded image as the FULL visual and face reference.
+The person’s face, eyes, hair, skin texture, facial proportions, expression,
+body posture, clothing, camera angle, framing, and lighting
+must remain 100% identical to the reference image.
+No beautification, no changes, no smile.
+Create an ultra-realistic cinematic conceptual portrait.
+Pose:
+Keep the exact same pose as the reference image.
+The person is holding the Iran-shaped object close to the chest.
+The elegant watering can remains in the same hand and position.
+Main Object (Iran – FINAL STATE):
+The object remains a silhouette in the exact shape of the map of Iran.
+The entire surface of the Iran map is now fully transformed into a lush floral landscape.
+No dry soil is visible anymore.
+Floral Composition (VERY IMPORTANT):
+Flowers fully cover the Iran shape and are arranged HORIZONTALLY
+to clearly resemble the Iranian flag:
+Top section: dense GREEN flowers and rich green foliage
+Middle section: abundant WHITE blossoms, layered petals
+Bottom section: deep RED flowers in full bloom
+Flowers must be:
+Fully grown
+Three-dimensional
+Volumetric and raised
+Dense and overlapping
+Highly detailed petals, stems, and leaves
+Natural botanical realism
+Soft shadows between flowers
+No flat or artificial look
+Surface Details:
+No cracks.
+No dryness.
+Everything looks fertile, alive, and flourishing.
+Lighting:
+Same cinematic lighting as the reference image.
+Slightly brighter and warmer than previous frames.
+Soft golden highlights enhancing flower volume.
+Still natural, not overexposed.
+Background:
+Identical to the reference image.
+Soft blurred.
+No movement.
+No changes.
+Photography:
+Ultra-realistic cinematic portrait photography.
+85mm lens look.
+High dynamic range.
+8K quality.
+Composition:
+Vertical 4:5.
+Chest-up framing.
+Centered subject.
+No text.
+No logos.
+No symbols.
+No extra elements.
+Mood:
+Rebirth.
+Life.
+Hope fulfilled.
+Iran as a blooming land.
+Calm, powerful, and resolved.`
+            },
+            {
+                id: 4,
+                title: "ویدیو ۱: انتقال (از کویر به جوانه)",
+                type: "video",
+                category: "تولید ویدیو",
+                content: `Video 1 Prompt: (Image 1 to Image 2)
+Use TWO reference images.
+START FRAME reference:
+The image with the completely dry, cracked desert Iran map
+(no flowers, no greenery).
+END FRAME reference:
+The image with early blossoms arranged horizontally
+(green top, white middle, red bottom).
+The person, face, hair, skin texture, expression, clothing,
+watering can, pose, camera angle, framing, and lighting
+must remain 100% identical throughout the entire video.
+No beautification, no changes, no smile.
+Create an ultra-realistic cinematic image-to-video sequence.
+START FRAME:
+The Iran-shaped object is completely barren.
+Dry cracked desert soil.
+No moisture.
+No plants.
+No flowers.
+Watering can is slightly tilted, about to pour.
+VIDEO ACTION:
+A gentle, realistic stream of water begins to pour
+from the watering can onto the Iran map.
+As the water touches the surface:
+• Soil darkens slightly where water lands
+• Cracks soften but remain visible
+• Tiny green buds appear first at the TOP area
+• Small white blossoms emerge in the MIDDLE
+• Small red blossoms appear at the BOTTOM
+The growth is slow, subtle, and poetic.
+No sudden transformation.
+No exaggerated motion.
+END FRAME (Final Frame):
+The final frame must EXACTLY match the second reference image:
+• Same partial blossoms
+• Same horizontal color layout (green / white / red)
+• Same amount of growth
+• Same lighting and framing
+CAMERA:
+Locked camera.
+No zoom.
+No shake.
+No reframing.
+LIGHTING:
+Identical cinematic lighting throughout.
+Slightly warmer toward the end.
+BACKGROUND:
+Completely static.
+Soft blurred background.
+No movement.
+STYLE:
+Ultra-realistic.
+Cinematic.
+Natural motion.
+High-detail textures.
+Shallow depth of field.
+TIMING:
+Smooth transition.
+Calm pacing.
+No cuts.
+RESTRICTIONS:
+No text.
+No logos.
+No symbols.
+No extra elements.
+No change in pose or identity.
+No vertical color layout.`
+            },
+            {
+                id: 5,
+                title: "ویدیو ۲: شکوفایی کامل (از جوانه به سرسبزی)",
+                type: "video",
+                category: "تولید ویدیو",
+                content: `Video 2 Prompt: (Image 2 to Image 3)
+Use the uploaded images as visual references ONLY.
+The character is a fictional adult male.
+Do NOT identify or reference any real person, public figure, or identity.
+Facial features, expression, hairstyle, clothing, pose, watering can,
+camera angle, framing, and lighting should remain visually consistent
+with the reference images, without explicitly recreating a real individual.
+Create an ultra-realistic cinematic image-to-video sequence.
+START FRAME reference:
+The image with early blossoms on the Iran-shaped object.
+Dry soil still partially visible.
+Horizontal color layout:
+green on top, white in the middle, red at the bottom.
+END FRAME reference:
+The image with the Iran-shaped object fully covered in dense flowers.
+No soil visible.
+Same horizontal green / white / red layout.
+VIDEO ACTION:
+A gentle, realistic stream of water flows from the watering can
+onto the Iran-shaped surface.
+As the water spreads:
+• Soil gradually disappears
+• Flowers grow fuller and denser
+• Petals open naturally
+• Leaves thicken and gain depth
+• Growth remains smooth, organic, and realistic
+END FRAME:
+Must visually match the final reference image:
+• Fully flower-covered Iran shape
+• Dense, volumetric flowers
+• Horizontal green / white / red arrangement
+• Same composition and lighting
+CAMERA:
+Locked camera.
+No zoom.
+No pan.
+No shake.
+LIGHTING:
+Soft cinematic lighting.
+Slightly warmer toward the end.
+BACKGROUND:
+Soft blurred background.
+Completely static.
+STYLE:
+Ultra-realistic.
+Cinematic.
+Natural motion.
+High-detail botanical textures.
+RESTRICTIONS:
+No text.
+No logos.
+No symbols.
+No real-person identification.
+No vertical color layout.
+No exaggerated motion.`
+            }
+        ];
+
+        // --- Components ---
+
+        const Header = () => (
+            <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+                <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="flex flex-col items-start">
+                            <h1 className="text-lg font-bold text-white tracking-wide">علی خداکرمی</h1>
+                            <p className="text-xs text-slate-400">تولید محتوا و هوش مصنوعی</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <a href="https://instagram.com/mykhweb" target="_blank" dir="ltr" className="flex items-center gap-2 text-sm font-medium text-rose-500 hover:text-rose-400 transition-colors bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-800 hover:border-rose-500/50">
+                            <Instagram size={16} />
+                            <span className="hidden sm:inline font-mono">@mykhweb</span>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        );
+
+        const Hero = () => (
+            <section className="relative pt-20 pb-12 px-4 text-center">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-64 bg-emerald-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+                <div className="max-w-3xl mx-auto relative z-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold mb-6">
+                        <Sparkles size={12} className="text-emerald-500" />
+                        <span>پرامپت‌های سینمایی هوش مصنوعی</span>
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight leading-tight">
+                        شکوفایی <span className="iran-gradient-text">ایران</span>
+                    </h2>
+                    <p className="text-slate-400 text-lg leading-relaxed max-w-2xl mx-auto font-light">
+                        مجموعه‌ای از پرامپت‌های فوق‌رئالستیک برای به تصویر کشیدن تحول مفهومی از یک کویر خشک به دشتی سرسبز و پر از گل.
+                    </p>
+                </div>
+            </section>
+        );
+
+        const PromptCard = ({ prompt }) => {
+            const [copied, setCopied] = useState(false);
+
+            const handleCopy = () => {
+                const textarea = document.createElement("textarea");
+                textarea.value = prompt.content;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                } catch (err) {
+                    console.error('Failed to copy', err);
+                }
+                document.body.removeChild(textarea);
+            };
+
+            const Icon = prompt.type === 'video' ? Film : ImageIcon;
+            // Green for image, Red for video to match flag theme subtly
+            const typeColor = prompt.type === 'video' 
+                ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' 
+                : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
+
+            return (
+                <div className="group relative bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition-all duration-300 shadow-xl shadow-black/20 text-right">
+                    {/* Card Header */}
+                    <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+                        <div className="flex items-center gap-4">
+                            <div className={`p-2.5 rounded-xl border ${typeColor}`}>
+                                <Icon size={20} />
+                            </div>
+                            <div>
+                                <h3 className="text-white font-bold text-base md:text-lg">{prompt.title}</h3>
+                                <p className="text-xs text-slate-500 font-medium mt-0.5">{prompt.category}</p>
+                            </div>
+                        </div>
+                        <button 
+                            onClick={handleCopy}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+                                copied 
+                                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" 
+                                : "bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white"
+                            }`}
+                        >
+                            {copied ? <Check size={16} /> : <Copy size={16} />}
+                            {copied ? "کپی شد!" : "کپی"}
+                        </button>
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="p-0 relative" dir="ltr">
+                        <pre className="p-6 text-xs md:text-sm text-slate-300 font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-[400px] overflow-y-auto selection:bg-emerald-500/30 selection:text-emerald-100 text-left">
+                            {prompt.content}
+                        </pre>
+                        {/* Fade at bottom if long */}
+                        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none"></div>
+                    </div>
+                </div>
+            );
+        };
+
+        const Footer = () => (
+            <footer className="mt-20 py-8 border-t border-slate-800 text-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="text-slate-500 text-sm">
+                        <p>© ۱۴۰۳ علی خداکرمی. تمامی حقوق محفوظ است.</p>
+                        <p className="mt-2 flex items-center justify-center gap-2 text-xs" dir="ltr">
+                            Created for <span className="text-slate-400 font-bold font-mono">@mykhweb</span>
+                        </p>
+                    </div>
+                </div>
+            </footer>
+        );
+
+        const App = () => {
+            return (
+                <div className="min-h-screen bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950" dir="rtl">
+                    <Header />
+                    <Hero />
+                    
+                    <main className="max-w-4xl mx-auto px-4 flex flex-col gap-8 pb-12">
+                        {prompts.map(prompt => (
+                            <PromptCard key={prompt.id} prompt={prompt} />
+                        ))}
+                    </main>
+
+                    <Footer />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
